@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warehouse Repair App v6</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d6efd">
+<style>
+:root {
+  --bg: #f9fafb;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --primary: #0d6efd;
+  --chip: #e5e7eb;
+}
+:root[data-theme="dark"] {
+  --bg: #0b0f16;
+  --card: #111827;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --border: #374151;
+  --primary: #4f8cff;
+  --chip: #374151;
+}
+*{box-sizing:border-box}
+body { font-family: Arial, sans-serif; margin: 0; background:var(--bg); color:var(--text); }
+header { background:var(--primary); color:white; padding:12px; text-align:center; font-weight:bold; position:sticky; top:0; z-index:2; }
+.header-actions { position:absolute; right:8px; top:8px; display:flex; gap:8px; }
+.container { padding:16px; max-width:1000px; margin:auto; }
+.card { background:var(--card); padding:16px; margin-bottom:16px; border-radius:10px; border:1px solid var(--border); }
+label { display:block; margin-top:8px; font-size:14px; }
+input, select { width:100%; padding:10px; margin-top:4px; border:1px solid var(--border); border-radius:8px; background:transparent; color:var(--text); }
+button { margin-top:12px; padding:10px 14px; border:none; border-radius:8px; cursor:pointer; font-weight:600; }
+button.primary { background:var(--primary); color:white; }
+button.secondary { background:var(--chip); color:var(--text); }
+.hidden { display:none; }
+.row { display:flex; gap:12px; flex-wrap:wrap; }
+.col { flex:1 1 220px; }
+.tab { display:inline-block; margin:4px 8px 8px 0; padding:6px 10px; background:var(--chip); border-radius:16px; cursor:pointer; font-size:13px; }
+.tab.active { outline:2px solid var(--primary); }
+#progress { margin:0 0 12px 0; font-weight:bold; }
+.table { width:100%; border-collapse: collapse; }
+.table th, .table td { border:1px solid var(--border); padding:8px; font-size:14px; text-align:left; }
+.section-title { font-weight:700; margin-top:8px; }
+hr { border:none; border-top:1px solid var(--border); margin:12px 0; }
+.helper { color:var(--muted); font-size:12px; }
+.actions { display:flex; gap:8px; flex-wrap:wrap; }
+.frame-chips { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.chip { background:var(--chip); border:1px solid var(--border); padding:6px 10px; border-radius:999px; font-size:13px; }
+.toggle { padding:6px 10px; border-radius:999px; background:var(--chip); }
+</style>
+</head>
+<body>
+<header>
+  Warehouse Repair App v6
+  <div class="header-actions">
+    <button id="darkToggle" class="toggle">🌙</button>
+  </div>
+</header>
+<div class="container">
+
+<!-- Login Page -->
+<div id="loginPage" class="card">
+  <h2>Login / Signup</h2>
+  <div id="signupFields" class="hidden">
+    <div class="row">
+      <label class="col">First Name <input id="firstName"></label>
+      <label class="col">Last Name <input id="lastName"></label>
+      <label class="col">Phone <input id="phone"></label>
+    </div>
+  </div>
+  <div class="row">
+    <label class="col">Email <input id="email"></label>
+    <label class="col">Password <input id="password" type="password"></label>
+  </div>
+  <div class="actions">
+    <button id="toggleSignup" class="secondary">Create Account</button>
+    <button id="loginBtn" class="primary">Login</button>
+  </div>
+  <div class="helper">Tip: Create an account once. After that, log in with email + password.</div>
+</div>
+
+<!-- Frame Dimensions Page -->
+<div id="framePage" class="card hidden">
+  <div class="row" style="align-items:center; justify-content:space-between;">
+    <h2 id="frameTitle">Add Frame 1</h2>
+    <div>
+      <button id="proceedToDamage" class="secondary">Proceed to Damage Page →</button>
+    </div>
+  </div>
+  <div class="row">
+    <label class="col">Depth <input id="depth"></label>
+    <label class="col">Width
+      <select id="width">
+        <option>3” x 3”</option>
+        <option>3” x 1-5/8”</option>
+        <option>4” x 3”</option>
+        <option>4” x 1-5/8”</option>
+        <option>C3</option>
+        <option>C4</option>
+        <option>C5</option>
+      </select>
+    </label>
+  </div>
+  <div class="row">
+    <label class="col">Is there a backer?
+      <select id="hasBacker">
+        <option>No</option>
+        <option>Yes</option>
+      </select>
+    </label>
+    <label class="col hidden" id="backerTypeWrap">Backer Type
+      <select id="backerType">
+        <option>3” x 3”</option>
+        <option>3” x 1-5/8”</option>
+        <option>4” x 3”</option>
+        <option>4” x 1-5/8”</option>
+        <option>C3</option>
+        <option>C4</option>
+        <option>C5</option>
+      </select>
+    </label>
+  </div>
+  <div class="row">
+    <label class="col">Horizontal Strut Dimensions (L • W • H) <input id="hStrutDims"></label>
+    <label class="col">Diagonal Strut Dimensions (L • W • H) <input id="dStrutDims"></label>
+  </div>
+  <div class="row">
+    <label class="col">Strut Heights <input id="strutHeights"></label>
+    <label class="col">Hole Punch Style <input id="holePunch"></label>
+    <label class="col">Color <input id="color"></label>
+  </div>
+  <div class="row">
+    <label class="col">Rack Manufacturer
+      <select id="manufacturer">
+        <option>Interlake</option><option>Unarco</option><option>Mecalux</option><option>Ridg-U-Rak</option>
+        <option>Advanced</option><option>Frazier</option><option>Konstant</option><option>Sturdi-Bilt</option><option>Penco</option>
+      </select>
+    </label>
+  </div>
+  <div class="actions">
+    <button id="addFrame" class="primary">+ Add Frame</button>
+    <button id="clearFrame" class="secondary">Clear</button>
+  </div>
+  <div>
+    <div class="section-title">Frames Added</div>
+    <div id="frameChips" class="frame-chips"></div>
+    <div class="helper">Tap "Add Frame" to add Frame 1, Frame 2, etc. Use chips below to see what's added. Then hit "Proceed to Damage Page".</div>
+  </div>
+</div>
+
+<!-- Damage Location Page -->
+<div id="damagePage" class="card hidden">
+  <div id="progress">Frame 1 → Damage 1</div>
+  <div id="damageTabs"></div>
+  <hr />
+  <div class="row">
+    <label class="col">Frame Type
+      <select id="frameSelect"></select>
+    </label>
+    <label class="col">Location of Damage <input id="damageLocation" placeholder="e.g. 28-411-01"></label>
+  </div>
+  <div class="row">
+    <label class="col">Type of Repair Needed
+      <select id="repairType">
+        <option>EVL-S</option><option>EVL-D</option><option>BAD</option><option>BFL</option>
+      </select>
+    </label>
+    <label class="col">Height of Repair Needed
+      <select id="repairHeight"></select>
+    </label>
+  </div>
+  <div class="row">
+    <label class="col">Beam Level Height 1 <input id="beamHeight1" placeholder='e.g. 48"'></label>
+    <label class="col">Beam Level Height 2 <input id="beamHeight2" placeholder='e.g. 54"'></label>
+    <label class="col">Beam Level Height 3 <input id="beamHeight3" placeholder='optional'></label>
+    <label class="col">Beam Level Height 4 <input id="beamHeight4" placeholder='optional'></label>
+  </div>
+  <div class="row">
+    <label class="col">Struts Needed?
+      <select id="strutsNeeded">
+        <option>No</option><option>Yes</option>
+      </select>
+    </label>
+    <label class="col">Diagonal Struts <input type="number" id="diagStruts" min="0" value="0"></label>
+    <label class="col">Horizontal Struts <input type="number" id="horizStruts" min="0" value="0"></label>
+  </div>
+  <div class="actions">
+    <button id="duplicateLast" class="secondary">Duplicate Last Damage</button>
+    <button id="nextDamage" class="primary">Save & Next Damage</button>
+    <button id="saveEdit" class="primary hidden">Save Changes</button>
+    <button id="cancelEdit" class="secondary hidden">Cancel Edit</button>
+    <button id="editFrame" class="secondary">Edit Frame</button>
+    <button id="toOverview" class="secondary">Overview</button>
+    <button id="exportCSV" class="secondary">Export CSV</button>
+    <button id="exportXLSX" class="secondary">Export XLSX</button>
+  </div>
+  <div class="helper">"Duplicate Last Damage" prefills all fields from the last entry (except Location), so you only change the location number.</div>
+</div>
+
+<!-- Overview Page -->
+<div id="overviewPage" class="card hidden">
+  <h2>Overview of Notated Locations</h2>
+  <div id="overviewContent"></div>
+  <div class="actions">
+    <button id="overviewBack" class="secondary">Back to Damage Page</button>
+    <button id="overviewExportCSV" class="secondary">Export CSV</button>
+    <button id="overviewExportXLSX" class="secondary">Export XLSX</button>
+  </div>
+</div>
+
+<script src="app_v6.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js"></script>
+<script>
+  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+  // Persist dark mode preference
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+</script>
+</div>
+</body>
+</html>
